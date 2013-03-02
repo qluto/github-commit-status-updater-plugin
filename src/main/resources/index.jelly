@@ -1,0 +1,7 @@
+<!--
+  This view is used to render the installed plugins page.
+-->
+<div>
+  This plugin is updater of commit-status on Github.
+  http://developer.github.com/v3/repos/statuses/
+</div>
