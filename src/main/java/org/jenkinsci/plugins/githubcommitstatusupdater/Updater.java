@@ -57,7 +57,11 @@ public class Updater extends Notifier {
     if (accessToken != null && !accessToken.isEmpty()
         && repositoryName != null && !repositoryName.isEmpty()) {
       try {
-        github = GitHub.connectUsingOAuth(accessToken);
+        if (githubApi != null && !githubApi.isEmpty()) {
+          github = GitHub.connectUsingOAuth(githubApi, accessToken);
+        } else {
+          github = GitHub.connectUsingOAuth(accessToken);
+        }
         GHCommitState state;
         String description = "Build finished.";
         String url = "";
