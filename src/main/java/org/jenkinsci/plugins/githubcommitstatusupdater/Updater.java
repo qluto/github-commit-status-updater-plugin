@@ -21,6 +21,7 @@ import hudson.tasks.Publisher;
 import hudson.tasks.Notifier;
 import hudson.EnvVars;
 import hudson.model.Result;
+import hudson.model.Hudson;
 
 import org.kohsuke.github.GHCommitState;
 import org.kohsuke.github.GHRepository;
@@ -33,15 +34,15 @@ import java.io.IOException;
  */
 public class Updater extends Notifier {
   private String githubApi;
-  private String repository;
+  private String repositoryName;
   private String accessToken;
 
   private GitHub github;
 
   @DataBoundConstructor
-  public Updater(String githubApi, String repository, String accessToken) {
+  public Updater(String githubApi, String repositoryName, String accessToken) {
     this.githubApi = githubApi;
-    this.repository = repository;
+    this.repositoryName = repositoryName;
     this.accessToken = accessToken;
   }
   public String getGithubApi() {
@@ -54,7 +55,7 @@ public class Updater extends Notifier {
   @Override
   public boolean perform(AbstractBuild build, Launcher launcher, BuildListener listener) {
     if (accessToken != null && !accessToken.isEmpty()
-        && repository != null && !repository.isEmpty()) {
+        && repositoryName != null && !repositoryName.isEmpty()) {
       try {
         github = GitHub.connectUsingOAuth(accessToken);
         GHCommitState state;
@@ -66,6 +67,11 @@ public class Updater extends Notifier {
         String sha1 = env.get("GIT_COMMIT");
         listener.getLogger().println("sha1: " + sha1);
 
+        url = hudson.model.Hudson.getInstance().getRootUrl() + build.getUrl();
+        if (Hudson.getInstance().getRootUrl() != null) {
+          url = Hudson.getInstance().getRootUrl() + build.getUrl();
+        }
+
         Result result = build.getResult();
         if (result.isBetterOrEqualTo(Result.SUCCESS)) {
           state = GHCommitState.SUCCESS;
@@ -73,8 +79,7 @@ public class Updater extends Notifier {
           state = GHCommitState.FAILURE;
         }
 
-        GHRepository repo = github.getRepository(repository);
-
+        GHRepository repo = github.getRepository(repositoryName);
         repo.createCommitStatus(sha1, state, url, description);
 
         listener.getLogger().println("update commit-status: success!");

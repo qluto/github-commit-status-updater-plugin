@@ -2,7 +2,7 @@
   <f:entry title="github api" field="githubApi">
     <f:textbox />
   </f:entry>
-  <f:entry title="repository" field="repository">
+  <f:entry title="repository name" field="repositoryName">
     <f:textbox />
   </f:entry>
   <f:entry title="access token" field="accessToken">
