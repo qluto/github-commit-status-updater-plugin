@@ -51,6 +51,9 @@ public class Updater extends Notifier {
   public String getAccessToken() {
     return accessToken;
   }
+  public String getRepositoryName() {
+    return repositoryName;
+  }
 
   @Override
   public boolean perform(AbstractBuild build, Launcher launcher, BuildListener listener) {
